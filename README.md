@@ -178,7 +178,7 @@ fetch('/api/v1/devices')
 }
 ```
 
-### 4. 守卫事件接口 (GET /api/v1/guard/events)
+### 4. 守卫事件接口 (GET /api/v1/guard/events) [未来版本 - 守卫模式相关]
 
 **目的**: 获取入侵报警的历史记录
 
@@ -222,7 +222,7 @@ fetch('/api/v1/devices')
 **支持的指令类型**:
 - `REBOOT`: 重启设备
 - `SET_MODE`: 设置跟踪模式 (single/multi)
-- `SET_ZONE`: 设置预警区域
+- `SET_ZONE`: [未来版本] 设置预警区域
 
 **响应**:
 ```json

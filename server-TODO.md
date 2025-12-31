@@ -2,15 +2,15 @@
 
 ## 概述
 
-当前后端已实现所有7个API接口，支持完整可视化功能：
+当前后端已实现所有核心API接口，支持完整可视化功能：
 
 1. **设备列表**: `/api/v1/devices` (GET) ✅ 已完成
 2. **数据上报**: `/api/v1/device/sync` (POST) ✅ 已完成
 3. **实时流**: `/ws/radar/live?mac={id}` (WebSocket) ✅ 已完成
 4. **历史回溯**: `/api/v1/radar/history` (GET) ✅ 已完成
-5. **守卫日志**: `/api/v1/guard/events` (GET) ✅ 已完成
+5. **守卫日志**: `/api/v1/guard/events` (GET) [未来版本 - 守卫模式相关]
 6. **设备状态**: `/api/v1/device/status` (GET) ✅ 已完成
-7. **下发指令**: `/api/v1/device/command` (POST) ✅ 已完成
+7. **下发指令**: `/api/v1/device/command` (POST) ✅ 已完成（支持REBOOT、SET_MODE；SET_ZONE标记为未来版本）
 
 ### 0. 设备列表API (/api/v1/devices)
 
