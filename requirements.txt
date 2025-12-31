@@ -2,3 +2,5 @@ flask
 flask_sqlalchemy
 flask_cors
 pymysql
+flask-socketio==5.3.6
+eventlet==0.33.3
