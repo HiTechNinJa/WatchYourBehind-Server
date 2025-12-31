@@ -61,6 +61,86 @@ WatchYourBehind-Server/
       }
     }
     ```
-    
+
+- GET /api/v1/device/status
+  - 获取设备状态信息
+  - 参数：device_mac (查询字符串)
+  - 响应示例：
+    ```json
+    {
+      "code": 200,
+      "data": {
+        "device_mac": "AA:BB:CC:DD:EE:FF",
+        "online_status": true,
+        "firmware_ver": "1.0.0",
+        "track_mode": "multi",
+        "bluetooth_state": false,
+        "last_heartbeat": "2025-12-31T12:00:00Z"
+      }
+    }
+    ```
+
+- GET /api/v1/radar/history
+  - 获取历史轨迹数据
+  - 参数：device_mac, start_time, end_time (查询字符串)
+  - 响应示例：
+    ```json
+    {
+      "code": 200,
+      "data": [
+        {
+          "target_id": 1,
+          "pos_x": 100,
+          "pos_y": 200,
+          "speed": 10,
+          "created_at": "2025-12-31T12:00:00Z"
+        }
+      ]
+    }
+    ```
+
+- GET /api/v1/guard/events
+  - 获取守卫事件日志
+  - 参数：device_mac, start_time, end_time (查询字符串)
+  - 响应示例：
+    ```json
+    {
+      "code": 200,
+      "data": [
+        {
+          "event_id": 1,
+          "zone_id": 1,
+          "start_time": "2025-12-31T12:00:00Z",
+          "end_time": "2025-12-31T12:05:00Z",
+          "duration": 300,
+          "max_speed": 50
+        }
+      ]
+    }
+    ```
+
+- POST /api/v1/device/command
+  - 下发设备指令
+  - 请求体示例：
+    ```json
+    {
+      "device_mac": "AA:BB:CC:DD:EE:FF",
+      "command_type": "SET_MODE",
+      "payload": {"mode": "single"}
+    }
+    ```
+  - 响应示例：
+    ```json
+    {
+      "code": 200,
+      "message": "Command queued successfully"
+    }
+    ```
+
+- WS /ws/radar/live?mac={id}
+  - WebSocket实时数据流
+  - 消息格式：同 /api/v1/device/sync 的 targets 数组
+
 ## 开发日志
 - 2025-12-31：优化数据入库逻辑，后端自动过滤x/y全为0的无效目标，不再写入数据库，并在日志中记录过滤情况，防止冗余数据
+- 2025-12-31：根据前端设计文档更新API规划，添加设备状态、历史回溯、守卫事件、指令下发和WebSocket实时流接口
