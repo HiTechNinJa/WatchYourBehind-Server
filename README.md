@@ -4,6 +4,7 @@
 
 ## 项目结构
 ```
+。
 WatchYourBehind-Server/
 ├── app.py
 ├── models.py
@@ -17,12 +18,19 @@ WatchYourBehind-Server/
    ```
    pip install -r requirements.txt
    ```
+2. 进入目录激活虚拟环境
+    ```
+   cd WatchYourBehind-Server && source venv/bin/activate  # Linux/Mac
+   ```   
 2. 配置数据库连接（编辑 config.py）
 3. 启动服务
    ```
    python app.py
    ```
-
+4. 一键启动
+    ```
+    cd WatchYourBehind-Server && source venv/bin/activate && python app.py
+    ```
 ## 主要文件说明
 - app.py：主入口，API路由
 - models.py：数据库模型
@@ -53,3 +61,6 @@ WatchYourBehind-Server/
       }
     }
     ```
+    
+## 开发日志
+- 2025-12-31：优化数据入库逻辑，后端自动过滤x/y全为0的无效目标，不再写入数据库，并在日志中记录过滤情况，防止冗余数据

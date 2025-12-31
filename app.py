@@ -17,19 +17,29 @@ def device_sync():
     batch_id = data.get('batch_id', 'batch_' + datetime.now().strftime('%Y%m%d%H%M%S'))
     device_mac = data.get('device_mac', 'unknown')
     now = datetime.now()
+    filtered_count = 0
     for i, t in enumerate(targets):
+        x = t.get('x', 0)
+        y = t.get('y', 0)
+        speed = t.get('speed', 0)
+        resolution = t.get('resolution', 0)
+        if x == 0 and y == 0 and speed == 0 and resolution == 0:
+            print(f"[SYNC][{now}] 过滤掉无效目标: device_mac={device_mac}, batch_id={batch_id}, target_id={i+1}, x=0, y=0, speed=0, resolution=0")
+            filtered_count += 1
+            continue
         log = RadarTrackingLog(
             device_mac=device_mac,
             batch_id=batch_id,
             target_id=i+1,
-            pos_x=t.get('x', 0),
-            pos_y=t.get('y', 0),
+            pos_x=x,
+            pos_y=y,
             speed=t.get('speed', 0),
             resolution=t.get('resolution', 0),
             created_at=now
         )
         db.session.add(log)
     db.session.commit()
+    print(f"[SYNC][{now}] device_mac={device_mac}, batch_id={batch_id}, 有效目标数={len(targets)-filtered_count}, 过滤无效目标数={filtered_count}")
     resp = {
         "code": 200,
         "data": {
