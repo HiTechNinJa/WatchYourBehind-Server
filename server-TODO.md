@@ -2,23 +2,53 @@
 
 ## 概述
 
-当前后端仅实现了 `/api/v1/device/sync` (POST) 接口。根据前端设计文档和数据库设计，需要实现以下5个API以支持完整可视化功能：
+当前后端已实现所有7个API接口，支持完整可视化功能：
 
-1. **实时流**: `/ws/radar/live?mac={id}` (WebSocket)
-2. **历史回溯**: `/api/v1/radar/history` (GET)
-3. **守卫日志**: `/api/v1/guard/events` (GET)
-4. **设备状态**: `/api/v1/device/status` (GET)
-5. **下发指令**: `/api/v1/device/command` (POST)
+1. **设备列表**: `/api/v1/devices` (GET) ✅ 已完成
+2. **数据上报**: `/api/v1/device/sync` (POST) ✅ 已完成
+3. **实时流**: `/ws/radar/live?mac={id}` (WebSocket) ✅ 已完成
+4. **历史回溯**: `/api/v1/radar/history` (GET) ✅ 已完成
+5. **守卫日志**: `/api/v1/guard/events` (GET) ✅ 已完成
+6. **设备状态**: `/api/v1/device/status` (GET) ✅ 已完成
+7. **下发指令**: `/api/v1/device/command` (POST) ✅ 已完成
 
-## 技术栈更新
+### 0. 设备列表API (/api/v1/devices)
+
+**目的**: 前端自动发现设备，无需用户手动输入MAC
+
+**方法**: GET
+
+**响应格式**:
+```json
+{
+  "code": 200,
+  "data": [
+    {
+      "device_mac": "AA:BB:CC:DD:EE:FF",
+      "online_status": true,
+      "firmware_ver": "V2.04.23101915",
+      "last_heartbeat": "2025-12-31T12:00:00Z",
+      "active_viewers": 2
+    }
+  ]
+}
+```
+
+**实现逻辑**:
+- 查询所有DeviceShadow记录
+- 计算在线状态（5分钟内心跳）
+- 前端可自动选择设备并获取MAC
+
+## 技术栈更新 ✅ 已完成
 
 ### 新增依赖 (requirements.txt)
 ```
 flask-socketio==5.3.6
-eventlet==0.33.3  # 或 gevent==23.9.1
+eventlet==0.33.3
+flask-cors==6.0.2
 ```
 
-### Flask应用修改
+### Flask应用修改 ✅ 已完成
 ```python
 from flask_socketio import SocketIO, emit
 import eventlet
@@ -212,26 +242,26 @@ VALUES (?, ?, ?, 'PENDING', NOW())
 - 当有新sync数据时，通过WebSocket广播给所有连接的客户端
 - 支持多客户端同时观看
 
-## 实现步骤
+## 实现步骤 ✅ 已完成
 
-1. **更新依赖和启动方式**
+1. **更新依赖和启动方式** ✅
    - 添加flask-socketio和eventlet
    - 修改app.py使用socketio.run()
 
-2. **实现REST API**
+2. **实现REST API** ✅
    - 按顺序实现4个GET/POST API
    - 添加参数验证和错误处理
 
-3. **实现WebSocket**
+3. **实现WebSocket** ✅
    - 添加连接/断开事件处理
    - 修改device_sync函数，推送数据到WebSocket
 
-4. **测试和优化**
+4. **测试和优化** ✅
    - 单元测试各API
    - 性能测试（尤其是历史查询）
    - 添加日志记录
 
-## 注意事项
+## 注意事项 ✅ 已实现
 
 - **数据一致性**: 确保WebSocket推送的数据与sync API一致
 - **性能优化**: 历史查询可能返回大量数据，考虑分页

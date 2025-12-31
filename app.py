@@ -82,11 +82,29 @@ def device_sync():
     }
     return jsonify(resp)
 
-@app.route('/api/v1/device/status', methods=['GET'])
-def device_status():
-    device_mac = request.args.get('device_mac')
-    if not device_mac:
-        return jsonify({"code": 400, "message": "device_mac is required"}), 400
+@app.route('/api/v1/devices', methods=['GET'])
+def device_list():
+    devices = DeviceShadow.query.all()
+    device_list = []
+    for device in devices:
+        # 判断在线状态
+        is_online = False
+        if device.last_heartbeat:
+            time_diff = datetime.now() - device.last_heartbeat
+            is_online = time_diff.total_seconds() < 300  # 5分钟
+        
+        device_list.append({
+            "device_mac": device.device_mac,
+            "online_status": is_online,
+            "firmware_ver": device.firmware_ver or "unknown",
+            "last_heartbeat": device.last_heartbeat.isoformat() + 'Z' if device.last_heartbeat else None,
+            "active_viewers": device.active_viewers
+        })
+    
+    return jsonify({
+        "code": 200,
+        "data": device_list
+    })
     
     shadow = DeviceShadow.query.filter_by(device_mac=device_mac).first()
     if not shadow:
