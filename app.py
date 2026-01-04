@@ -45,6 +45,34 @@ def device_sync():
             created_at=now
         )
         db.session.add(log)
+
+    # 更新或创建设备影子状态，便于前端获取在线设备
+    shadow = DeviceShadow.query.filter_by(device_mac=device_mac).first()
+    if not shadow:
+        shadow = DeviceShadow(device_mac=device_mac)
+        db.session.add(shadow)
+        # 初始化未上报的信息为空
+        shadow.active_viewers = 0
+
+    shadow.last_heartbeat = now
+    shadow.online_status = True
+
+    firmware_ver = data.get('firmware_ver')
+    if firmware_ver:
+        shadow.firmware_ver = firmware_ver
+
+    track_mode = data.get('track_mode')
+    if track_mode in ('single', 'multi'):
+        shadow.track_mode = track_mode
+
+    if 'bluetooth_state' in data:
+        bluetooth_state = data.get('bluetooth_state')
+        if bluetooth_state is not None:
+            shadow.bluetooth_state = bool(bluetooth_state)
+
+    if 'zone_config' in data and data.get('zone_config') is not None:
+        shadow.zone_config = data.get('zone_config')
+
     db.session.commit()
     
     # 检查是否有待执行指令
